@@ -18,7 +18,7 @@ MainDialog::MainDialog(QWidget *parent) :
 
     pTimer->start(1000 / 30);
 
-    ns3DRudder::CSdk* pSdk=ns3DRudder::GetSDK();
+    ns3dRudder::CSdk* pSdk=ns3dRudder::GetSDK();
 
     if(pSdk->GetSDKVersion()!=_3DRUDDER_SDK_VERSION)
     {
@@ -38,7 +38,7 @@ MainDialog::~MainDialog()
 
 void MainDialog::UpdateCombo()
 {
-    ns3DRudder::CSdk* pSdk=ns3DRudder::GetSDK();
+    ns3dRudder::CSdk* pSdk=ns3dRudder::GetSDK();
 	QString sSelected=ui->comboBox->currentText();
 
 	ui->comboBox->clear();
@@ -55,58 +55,62 @@ void MainDialog::UpdateCombo()
 
 void MainDialog::timer()
 {
-    ns3DRudder::CSdk* pSdk=ns3DRudder::GetSDK();
+    ns3dRudder::CSdk* pSdk=ns3dRudder::GetSDK();
 	if (m_nNb3DRudderConnected != pSdk->GetNumberOfConnectedDevice())
 		UpdateCombo();
 
-    if(pSdk->IsDeviceConnected(ui->comboBox->currentData().toInt()))
+    uint    nPort=ui->comboBox->currentData().toInt();
+
+    if(pSdk->IsDeviceConnected(nPort))
     {
-        unsigned short nVersion = pSdk->GetFirmwareVersion(ui->comboBox->currentData().toInt());
+        uint16_t nVersion = pSdk->GetVersion(nPort);
         if(nVersion!=0xffff)
             ui->FwVersion->setText(QString::asprintf("FwVersion :%04x",nVersion));
         else
             ui->FwVersion->setText("Fw Version : Error");
 
-        ns3DRudder::State state;
-        if (pSdk->Get3DRudderState(ui->comboBox->currentData().toInt(), &state) == ns3DRudder::Success)
+        ns3dRudder::Axis axis;
+        if (pSdk->GetAxis(nPort,ns3dRudder::NormalisedValue, &axis) == ns3dRudder::Success)
         {
-            // Display joystick state to dialog
-            ui->Roll->setText(QString::asprintf("%d", state.aX));
-            ui->Pitch->setText(QString::asprintf("%d", (state.aY*(-1))));
-            ui->UpDown->setText(QString::asprintf("%d", state.aZ));
-            ui->Yaw->setText(QString::asprintf("%d", state.rZ));
+            ns3dRudder::Status status=pSdk->GetStatus(nPort);
 
-            switch (state.status)
+            // Display joystick state to dialog
+            ui->Roll->setText(QString::asprintf("%d", axis.GetXAxis()));
+            ui->Pitch->setText(QString::asprintf("%d", (axis.GetYAxis())));
+            ui->UpDown->setText(QString::asprintf("%d", axis.GetZAxis()));
+            ui->Yaw->setText(QString::asprintf("%d", axis.GetZRotation()));
+
+            switch (status)
             {
-                case  ns3DRudder::State::NoFootStayStill:
+                case  ns3dRudder::NoFootStayStill:
                     ui->Status->setText("Status : Don't put your Feet !!! Stay still 5s");
                 break;
-                case ns3DRudder::State::Initialisation:
+                case ns3dRudder::Initialisation:
                     ui->Status->setText("Status : Initialisation");
                 break;
-                case ns3DRudder::State::PutYourFeet:
+                case ns3dRudder::PutYourFeet:
                     ui->Status->setText("Status : Please put your feet");
                 break;
-                case ns3DRudder::State::PutSecondFoot:
+                case ns3dRudder::PutSecondFoot:
                     ui->Status->setText("Status :  Put your second foot");
                 break;
-                case ns3DRudder::State::StayStill:
+                case ns3dRudder::StayStill:
                     ui->Status->setText("Status : Stay still");
                 break;
-                case ns3DRudder::State::InUse:
+                case ns3dRudder::InUse:
                     ui->Status->setText("Status : 3DRudder in use");
                 break;
-                case ns3DRudder::State::ExtendedMode:
+                case ns3dRudder::ExtendedMode:
                     ui->Status->setText("Status : Extended functions activated");
                 break;
             }
 
-            ui->Sensor1->setText(QString::asprintf("%ld", state.s0));
-            ui->Sensor2->setText(QString::asprintf("%ld", state.s1));
-            ui->Sensor3->setText(QString::asprintf("%ld", state.s2));
-            ui->Sensor4->setText(QString::asprintf("%ld", state.s3));
-            ui->Sensor5->setText(QString::asprintf("%ld", state.s4));
-            ui->Sensor6->setText(QString::asprintf("%ld", state.s5));
+            ui->Sensor1->setText(QString::asprintf("%ld", pSdk->GetSensor(nPort,0)));
+            ui->Sensor2->setText(QString::asprintf("%ld", pSdk->GetSensor(nPort,1)));
+            ui->Sensor3->setText(QString::asprintf("%ld", pSdk->GetSensor(nPort,2)));
+            ui->Sensor4->setText(QString::asprintf("%ld", pSdk->GetSensor(nPort,3)));
+            ui->Sensor5->setText(QString::asprintf("%ld", pSdk->GetSensor(nPort,4)));
+            ui->Sensor6->setText(QString::asprintf("%ld", pSdk->GetSensor(nPort,5)));
 
         }
         if(!m_bConnected)
@@ -147,6 +151,6 @@ void MainDialog::on_comboBox_activated(int index)
 
 void MainDialog::on_pushButtonPLaySound_clicked()
 {
-    ns3DRudder::CSdk* pSdk=ns3DRudder::GetSDK();
+    ns3dRudder::CSdk* pSdk= ns3dRudder::GetSDK();
     pSdk->PlaySnd(ui->comboBox->currentData().toInt(),440,1000);
 }

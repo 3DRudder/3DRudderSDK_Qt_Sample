@@ -19,6 +19,12 @@
   <property name="windowTitle">
    <string>3DRudder SDK Sample</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
@@ -31,7 +37,7 @@
    <property name="title">
     <string>MainAxis</string>
    </property>
-   <widget class="QWidget" name="layoutWidget_1">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -121,7 +127,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget_4">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -160,7 +166,7 @@
    <property name="title">
     <string>Force Sensor</string>
    </property>
-   <widget class="QWidget" name="layoutWidget_5">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -246,7 +252,7 @@
     <string>Status</string>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_6">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
