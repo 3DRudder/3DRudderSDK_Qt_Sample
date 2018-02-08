@@ -19,6 +19,7 @@ MainDialog::MainDialog(QWidget *parent) :
     pTimer->start(1000 / 30);
 
     ns3dRudder::CSdk* pSdk=ns3dRudder::GetSDK();
+    pSdk->Init();
 
     if(pSdk->GetSDKVersion()!=_3DRUDDER_SDK_VERSION)
     {
@@ -70,15 +71,15 @@ void MainDialog::timer()
             ui->FwVersion->setText("Fw Version : Error");
 
         ns3dRudder::Axis axis;
-        if (pSdk->GetAxis(nPort,ns3dRudder::NormalisedValue, &axis) == ns3dRudder::Success)
+        if (pSdk->GetAxis(nPort,ns3dRudder::NormalizedValue, &axis) == ns3dRudder::Success)
         {
             ns3dRudder::Status status=pSdk->GetStatus(nPort);
 
             // Display joystick state to dialog
-            ui->Roll->setText(QString::asprintf("%d", axis.GetXAxis()));
-            ui->Pitch->setText(QString::asprintf("%d", (axis.GetYAxis())));
-            ui->UpDown->setText(QString::asprintf("%d", axis.GetZAxis()));
-            ui->Yaw->setText(QString::asprintf("%d", axis.GetZRotation()));
+            ui->Roll->setText(QString::asprintf("%f", axis.GetXAxis()));
+            ui->Pitch->setText(QString::asprintf("%f", (axis.GetYAxis())));
+            ui->UpDown->setText(QString::asprintf("%f", axis.GetZAxis()));
+            ui->Yaw->setText(QString::asprintf("%f", axis.GetZRotation()));
 
             switch (status)
             {

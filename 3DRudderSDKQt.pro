@@ -25,6 +25,8 @@ DEPENDPATH += $$PWD/../3DRudderSDK/Include/
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/x64/Static/ -l3DRudderSDK
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/x64/Static/ -l3DRudderSDK
+macx:CONFIG(release, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/MacOsx/ -l3DRudderSDK
+else:macx:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/MacOsx/ -l3DRudderSDK
 
 win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../3DRudderSDK/Lib/x64/Static/lib3DRudderSDK.a
 else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../3DRudderSDK/Lib/x64/Static/lib3DRudderSDK.a
