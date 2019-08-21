@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = 3DRudderSDKQt
 TEMPLATE = app
 
+DEFINES += UNICODE
+DEFINES += _UNICODE
 
 SOURCES += main.cpp\
         maindialog.cpp
@@ -23,8 +25,11 @@ FORMS    += maindialog.ui
 INCLUDEPATH += $$PWD/../3DRudderSDK/Include/
 DEPENDPATH += $$PWD/../3DRudderSDK/Include/
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/x64/Static/ -l3DRudderSDK
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/x64/Static/ -l3DRudderSDK
+#CONFIG += UITOOLS
+LIBS +=Advapi32.lib
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/win32/Static/ -l3DRudderSDK
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/win32/Static/ -l3DRudderSDK
 macx:CONFIG(release, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/MacOsx/ -l3DRudderSDK
 else:macx:CONFIG(debug, debug|release): LIBS += -L$$PWD/../3DRudderSDK/Lib/MacOsx/ -l3DRudderSDK
 

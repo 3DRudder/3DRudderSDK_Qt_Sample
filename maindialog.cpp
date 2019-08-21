@@ -18,6 +18,8 @@ MainDialog::MainDialog(QWidget *parent) :
 
     pTimer->start(1000 / 30);
 
+    ns3dRudder::ErrorCode code = ns3dRudder::LoadSDK();
+
     ns3dRudder::CSdk* pSdk=ns3dRudder::GetSDK();
     pSdk->Init();
 
@@ -70,23 +72,24 @@ void MainDialog::timer()
         else
             ui->FwVersion->setText("Fw Version : Error");
 
-        ns3dRudder::Axis axis;
-        if (pSdk->GetAxis(nPort,ns3dRudder::NormalizedValue, &axis) == ns3dRudder::Success)
+        ns3dRudder::AxesValue axis;
+        ns3dRudder::AxesParamNormalizedLinear params;
+        if (pSdk->GetAxes(nPort, &params, &axis) == ns3dRudder::Success)
         {
             ns3dRudder::Status status=pSdk->GetStatus(nPort);
 
             // Display joystick state to dialog
-            ui->Roll->setText(QString::asprintf("%f", axis.GetXAxis()));
-            ui->Pitch->setText(QString::asprintf("%f", (axis.GetYAxis())));
-            ui->UpDown->setText(QString::asprintf("%f", axis.GetZAxis()));
-            ui->Yaw->setText(QString::asprintf("%f", axis.GetZRotation()));
+            ui->Roll->setText(QString::asprintf("%f", axis.Get(ns3dRudder::LeftRight)));
+            ui->Pitch->setText(QString::asprintf("%f", (axis.Get(ns3dRudder::ForwardBackward))));
+            ui->UpDown->setText(QString::asprintf("%f", axis.Get(ns3dRudder::UpDown)));
+            ui->Yaw->setText(QString::asprintf("%f", axis.Get(ns3dRudder::Rotation)));
 
             switch (status)
             {
                 case  ns3dRudder::NoFootStayStill:
                     ui->Status->setText("Status : Don't put your Feet !!! Stay still 5s");
                 break;
-                case ns3dRudder::Initialisation:
+                case ns3dRudder::Initialization:
                     ui->Status->setText("Status : Initialisation");
                 break;
                 case ns3dRudder::PutYourFeet:
@@ -100,9 +103,6 @@ void MainDialog::timer()
                 break;
                 case ns3dRudder::InUse:
                     ui->Status->setText("Status : 3DRudder in use");
-                break;
-                case ns3dRudder::ExtendedMode:
-                    ui->Status->setText("Status : Extended functions activated");
                 break;
             }
 
